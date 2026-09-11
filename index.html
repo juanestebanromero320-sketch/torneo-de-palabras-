@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>El Reino Gramatical - 4.º Primaria</title>
+  <style>
+    :root {
+      --primary: #4338ca;
+      --secondary: #06b6d4;
+      --success: #10b981;
+      --error: #ef4444;
+      --warning: #f59e0b;
+      --bg: #0f172a;
+    }
+
+    body {
+      font-family: 'Comic Sans MS', 'Chalkboard SE', 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%);
+      color: #f8fafc;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 15px;
+      box-sizing: border-box;
+    }
+
+    .game-card {
+      background: rgba(30, 41, 59, 0.85);
+      backdrop-filter: blur(12px);
+      border: 3px solid rgba(255, 255, 255, 0.1);
+      border-radius: 24px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+      padding: 25px;
+      max-width: 650px;
+      width: 100%;
+      text-align: center;
+      position: relative;
+    }
+
+    .header-title {
+      font-size: 2rem;
+      margin: 0 0 10px 0;
+      background: linear-gradient(90deg, #38bdf8, #a855f7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 4px 10px rgba(168, 85, 247, 0.3);
+    }
+
+    .level-badge {
+      display: inline-block;
+      background: linear-gradient(90deg, #ec4899, #8b5cf6);
+      color: white;
+      padding: 8px 18px;
+      border-radius: 50px;
+      font-weight: 800;
+      font-size: 1rem;
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 12px rgba(236, 72, 153, 0.4);
+      margin-bottom: 15px;
+    }
+
+    .progress-bar-container {
+      background: #334155;
+      border-radius: 10px;
+      height: 12px;
+      width: 100%;
+      overflow: hidden;
+      margin-bottom: 15px;
+    }
+
+    .progress-bar {
+      background: linear-gradient(90deg, #10b981, #34d399);
+      height: 100%;
+      width: 0%;
+      transition: width 0.4s ease;
+    }
+
+    .info-panel {
+      display: flex;
+      justify-content: space-between;
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #94a3b8;
+      margin-bottom: 15px;
+    }
+
+    .score-box {
+      color: #facc15;
+      text-shadow: 0 0 8px rgba(250, 204, 21, 0.4);
+    }
+
+    .question-card {
+      background: #1e293b;
+      border: 2px solid #334155;
+      border-radius: 16px;
+      padding: 20px;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #f8fafc;
+      margin-bottom: 20px;
+      text-align: left;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 500px) {
+      .options-grid { grid-template-columns: 1fr; }
+    }
+
+    .option-btn {
+      background: #334155;
+      border: 2px solid #475569;
+      border-radius: 14px;
+      padding: 14px 18px;
+      color: #f8fafc;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.2s ease;
+      text-align: left;
+    }
+
+    .option-btn:hover {
+      background: #475569;
+      border-color: #38bdf8;
+      transform: translateY(-2px);
+    }
+
+    .option-btn.selected {
+      background: #1e3a8a;
+      border-color: #60a5fa;
+      box-shadow: 0 0 10px rgba(96, 165, 250, 0.5);
+    }
+
+    .checkbox-icon {
+      width: 22px;
+      height: 22px;
+      border: 2px solid #94a3b8;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+
+    .option-btn.selected .checkbox-icon {
+      background: #3b82f6;
+      border-color: #60a5fa;
+    }
+
+    .option-btn.selected .checkbox-icon::after {
+      content: '✓';
+      color: white;
+    }
+
+    .submit-btn {
+      background: linear-gradient(90deg, #10b981, #059669);
+      color: white;
+      border: none;
+      border-radius: 14px;
+      padding: 16px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+      box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+      transition: all 0.2s;
+    }
+
+    .submit-btn:hover {
+      transform: scale(1.02);
+      box-shadow: 0 8px 20px rgba(16, 185, 129, 0.6);
+    }
+
+    .feedback-box {
+      margin-top: 15px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      min-height: 40px;
+    }
+
+    .correct { color: #34d399; }
+    .incorrect { color: #f87171; }
+    .warning { color: #fbbf24; }
+
+    .restart-btn {
+      background: linear-gradient(90deg, #f97316, #ea580c);
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+<div class="game-card">
+  <h1 class="header-title">⚡ El Reino Gramatical ⚡</h1>
+  <div class="level-badge" id="level-badge">Cargando Nivel...</div>
+  
+  <div class="progress-bar-container">
+    <div class="progress-bar" id="progress-bar"></div>
+  </div>
+
+  <div class="info-panel">
+    <span>Pregunta: <b id="question-num">1</b>/10</span>
+    <span class="score-box">⭐ Puntos: <b id="score">0</b></span>
+  </div>
+
+  <div class="question-card" id="question">Cargando pregunta...</div>
+  <div class="options-grid" id="options"></div>
+
+  <button class="submit-btn" id="submit-btn" onclick="verificarRespuestas()">COMPROBAR RESPUESTA 🚀</button>
+  <button class="submit-btn restart-btn" id="restart-btn" onclick="reiniciarJuego()">JUGAR DE NUEVO 🔄</button>
+
+  <div class="feedback-box" id="feedback"></div>
+</div>
+
+<script>
+  const juegoData = [
+    {
+      nivel: "Nivel 1: Sustantivos 🏷️",
+      preguntas: [
+        { pregunta: "Selecciona los sustantivos propios de la lista:", opciones: ["España", "perro", "Barcelona", "ciudad"], correctas: [0, 2] },
+        { pregunta: "Selecciona los sustantivos colectivos (expresan grupo en singular):", opciones: ["Bosque", "Árbol", "Jauría", "Perro"], correctas: [0, 2] },
+        { pregunta: "¿Cuáles de los siguientes son sustantivos comunes?", opciones: ["Mesa", "Carlos", "Río", "Ebro"], correctas: [0, 2] },
+        { pregunta: "Marca los sustantivos individuales:", opciones: ["Rebaño", "Oveja", "Pájaro", "Bandada"], correctas: [1, 2] },
+        { pregunta: "¿Cuáles son sustantivos en género femenino?", opciones: ["Cuaderno", "Manzana", "Silla", "Sol"], correctas: [1, 2] },
+        { pregunta: "Selecciona las palabras que están en número plural:", opciones: ["Lápices", "Flor", "Casas", "Balón"], correctas: [0, 2] },
+        { pregunta: "¿Cuáles representan seres vivos (sustantivos animados)?", opciones: ["Gato", "Piedra", "Profesora", "Libro"], correctas: [0, 2] },
+        { pregunta: "Selecciona los sustantivos abstractos (ideas o sentimientos):", opciones: ["Alegría", "Mesa", "Amor", "Lápiz"], correctas: [0, 2] },
+        { pregunta: "Identifica los sustantivos concretos:", opciones: ["Justicia", "Pelota", "Agua", "Paz"], correctas: [1, 2] },
+        { pregunta: "Marca los sustantivos propios que identifican a personas:", opciones: ["Lucía", "Madrid", "Mateo", "Amazonas"], correctas: [0, 2] }
+      ]
+    },
+    {
+      nivel: "Nivel 2: Adjetivos y Artículos 🎨",
+      preguntas: [
+        { pregunta: "En 'El niño alto comió una manzana roja', ¿cuáles son adjetivos?", opciones: ["Alto", "Niño", "Roja", "Manzana"], correctas: [0, 2] },
+        { pregunta: "Selecciona los artículos determinados o definidos:", opciones: ["Un", "El", "Unos", "Las"], correctas: [1, 3] },
+        { pregunta: "Selecciona los artículos indeterminados o indefinidos:", opciones: ["Una", "La", "Unos", "Los"], correctas: [0, 2] },
+        { pregunta: "Marca los adjetivos en grado comparativo:", opciones: ["Muy alto", "Más rápido que", "Tan inteligente como", "Altísimo"], correctas: [1, 2] },
+        { pregunta: "¿Cuáles de estos adjetivos están en superlativo?", opciones: ["Guapísimo", "Buenísimo", "Lindo", "Más alto"], correctas: [0, 1] },
+        { pregunta: "Selecciona los adjetivos demostrativos:", opciones: ["Este", "Aquella", "Muchos", "Tres"], correctas: [0, 1] },
+        { pregunta: "Marca las palabras que concuerdan con 'las mesas':", opciones: ["Blancos", "Limpias", "Altas", "Nuevos"], correctas: [1, 2] },
+        { pregunta: "Selecciona los adjetivos posesivos:", opciones: ["Mi", "Tu", "Aquel", "Segundo"], correctas: [0, 1] },
+        { pregunta: "Selecciona los adjetivos numerales ordinales:", opciones: ["Dos", "Primero", "Tercero", "Cinco"], correctas: [1, 2] },
+        { pregunta: "Marca las frases con concordancia correcta:", opciones: ["Las gatas blancas", "El perro bonita", "Unos libros interesantes", "Una coche rápido"], correctas: [0, 2] }
+      ]
+    },
+    {
+      nivel: "Nivel 3: El Verbo 🏃‍♂️",
+      preguntas: [
+        { pregunta: "Selecciona las formas verbales en infinitivo:", opciones: ["Correr", "Comió", "Jugar", "Saltando"], correctas: [0, 2] },
+        { pregunta: "¿Cuáles de los siguientes verbos están en tiempo pasado?", opciones: ["Canté", "Canto", "Escribí", "Escribiré"], correctas: [0, 2] },
+        { pregunta: "¿Cuáles de estos verbos están en tiempo futuro?", opciones: ["Viajaré", "Viajé", "Estudiaré", "Estudio"], correctas: [0, 2] },
+        { pregunta: "Selecciona verbos conjugados en 1.ª persona singular ('Yo'):", opciones: ["Corro", "Corres", "Juego", "Juega"], correctas: [0, 2] },
+        { pregunta: "Marca los verbos en 2.ª persona del plural ('Vosotros/as'):", opciones: ["Coméis", "Comen", "Saltáis", "Saltan"], correctas: [0, 2] },
+        { pregunta: "¿Cuáles verbos pertenecen a la 1.ª conjugación (-AR)?", opciones: ["Bailar", "Beber", "Soñar", "Vivir"], correctas: [0, 2] },
+        { pregunta: "¿Cuáles verbos pertenecen a la 3.ª conjugación (-IR)?", opciones: ["Escribir", "Correr", "Dormir", "Comer"], correctas: [0, 2] },
+        { pregunta: "Selecciona los verbos que están en número plural:", opciones: ["Jugamos", "Juega", "Cantan", "Canta"], correctas: [0, 2] },
+        { pregunta: "Marca las formas verbales en tiempo presente:", opciones: ["Hablo", "Hablé", "Escucho", "Escucharé"], correctas: [0, 2] },
+        { pregunta: "Identifica los participios (-ado, -ido):", opciones: ["Comido", "Comer", "Jugado", "Jugando"], correctas: [0, 2] }
+      ]
+    },
+    {
+      nivel: "Nivel 4: Reglas de Acentuación ✍️",
+      preguntas: [
+        { pregunta: "Selecciona las palabras agudas:", opciones: ["Camión", "Mesa", "Café", "Pájaro"], correctas: [0, 2] },
+        { pregunta: "Selecciona las palabras llanas o graves:", opciones: ["Lápiz", "Corazón", "Árbol", "Música"], correctas: [0, 2] },
+        { pregunta: "Marca las palabras esdrújulas:", opciones: ["Plátano", "Sofá", "Música", "Pared"], correctas: [0, 2] },
+        { pregunta: "Agudas que LLEVAN tilde por acabar en N, S o vocal:", opciones: ["Compás", "Jardín", "Papel", "Reloj"], correctas: [0, 1] },
+        { pregunta: "Llanas que LLEVAN tilde por NO acabar en N, S ni vocal:", opciones: ["Árbol", "Casa", "Cárcel", "Libro"], correctas: [0, 2] },
+        { pregunta: "Selecciona las palabras correctamente acentuadas:", opciones: ["Teléfono", "Cancion", "Rápido", "Arbol"], correctas: [0, 2] },
+        { pregunta: "Palabras con la sílaba tónica en la antepenúltima posición:", opciones: ["Brújula", "Ratón", "Cámara", "Lápiz"], correctas: [0, 2] },
+        { pregunta: "Selecciona las palabras agudas SIN tilde:", opciones: ["Comer", "Pared", "Mamá", "Canción"], correctas: [0, 1] },
+        { pregunta: "¿Cuáles de estas palabras son llanas SIN tilde?", opciones: ["Mesa", "Ventana", "Fácil", "Lápiz"], correctas: [0, 1] },
+        { pregunta: "Monosílabos con tilde diacrítica:", opciones: ["Té (infusión)", "Él (pronombre)", "Sol", "Pan"], correctas: [0, 1] }
+      ]
+    },
+    {
+      nivel: "Nivel 5: Sintaxis y Ortografía 🧠",
+      preguntas: [
+        { pregunta: "En 'El perro inteligente ladra mucho', ¿cuál es el sujeto?", opciones: ["El perro inteligente", "ladra mucho", "El perro", "inteligente"], correctas: [0] },
+        { pregunta: "En 'Los niños juegan en el parque', ¿cuál es el predicado?", opciones: ["juegan en el parque", "Los niños", "en el parque", "juegan"], correctas: [0] },
+        { pregunta: "Selecciona las palabras bien escritas con G o J:", opciones: ["Girafa", "Girasol", "Jarra", "Gente"], correctas: [1, 2, 3] },
+        { pregunta: "Selecciona los plurales correctos que cambian Z por CES:", opciones: ["Pez -> Peces", "Lápiz -> Lápices", "Cruz -> Cruzes", "Nuez -> Nuezes"], correctas: [0, 1] },
+        { pregunta: "¿Cuáles oraciones tienen un sujeto plural?", opciones: ["Mis amigos van al cine", "El gato duerme", "Nosotros estudiamos", "Ana come pan"], correctas: [0, 2] },
+        { pregunta: "Selecciona las oraciones correctamente escritas:", opciones: ["Había muchas personas", "Habían muchas personas", "Hacen tres años", "Hace tres años"], correctas: [0, 3] },
+        { pregunta: "Marca las opciones correctas con la regla M antes de B y P:", opciones: ["Tambor", "Campo", "Tanbor", "Canpo"], correctas: [0, 1] },
+        { pregunta: "¿Cuáles son oraciones interrogativas (preguntas)?", opciones: ["¿Cómo te llamas?", "¡Qué sorpresa!", "Donde vives", "¿Cuándo es el examen?"], correctas: [0, 3] },
+        { pregunta: "Selecciona las palabras bien escritas con B o V:", opciones: ["Mover", "Escribir", "Movilidad", "Escrivir"], correctas: [0, 1] },
+        { pregunta: "Identifica el Núcleo del Sujeto y el Núcleo del Predicado en 'María compró un regalo':", opciones: ["Sujeto: María", "Predicado: compró", "Sujeto: regalo", "Predicado: madre"], correctas: [0, 1] }
+      ]
+    }
+  ];
+
+  let nivelActual = 0;
+  let preguntaActualIndex = 0;
+  let puntos = 0;
+  let seleccionados = [];
+
+  function cargarPregunta() {
+    const nivelData = juegoData[nivelActual];
+    const q = nivelData.preguntas[preguntaActualIndex];
+    seleccionados = [];
+
+    document.getElementById("level-badge").textContent = nivelData.nivel;
+    document.getElementById("question-num").textContent = preguntaActualIndex + 1;
+    document.getElementById("question").textContent = `${preguntaActualIndex + 1}. ${q.pregunta}`;
+    
+    // Actualizar barra de progreso
+    const totalProgreso = ((nivelActual * 10 + preguntaActualIndex) / 50) * 100;
+    document.getElementById("progress-bar").style.width = `${totalProgreso}%`;
+
+    const optionsContainer = document.getElementById("options");
+    optionsContainer.innerHTML = "";
+    document.getElementById("feedback").textContent = "";
+    document.getElementById("submit-btn").style.display = "block";
+
+    q.opciones.forEach((opcion, index) => {
+      const btn = document.createElement("div");
+      btn.className = "option-btn";
+      btn.onclick = () => toggleOpcion(index, btn);
+
+      const icon = document.createElement("div");
+      icon.className = "checkbox-icon";
+
+      const text = document.createElement("span");
+      text.textContent = opcion;
+
+      btn.appendChild(icon);
+      btn.appendChild(text);
+      optionsContainer.appendChild(btn);
+    });
+  }
+
+  function toggleOpcion(index, element) {
+    if (seleccionados.includes(index)) {
+      seleccionados = seleccionados.filter(i => i !== index);
+      element.classList.remove("selected");
+    } else {
+      seleccionados.push(index);
+      element.classList.add("selected");
+    }
+  }
+
+  function verificarRespuestas() {
+    const q = juegoData[nivelActual].preguntas[preguntaActualIndex];
+    const fb = document.getElementById("feedback");
+
+    if (seleccionados.length === 0) {
+      fb.textContent = "⚠️ ¡Debes seleccionar al menos una opción!";
+      fb.className = "feedback-box warning";
+      return;
+    }
+
+    const esCorrecto = seleccionados.length === q.correctas.length && 
+                       seleccionados.every(val => q.correctas.includes(val));
+
+    document.getElementById("submit-btn").style.display = "none";
+
+    if (esCorrecto) {
+      puntos += 10;
+      fb.textContent = "🎉 ¡EXCELENTE! Respuesta correcta (+10 pts)";
+      fb.className = "feedback-box correct";
+    } else {
+      const respuestasText = q.correctas.map(i => `"${q.opciones[i]}"`).join(", ");
+      fb.textContent = `❌ ¡Casi! La/s respuesta/s era/n: ${respuestasText}`;
+      fb.className = "feedback-box incorrect";
+    }
+
+    document.getElementById("score").textContent = puntos;
+
+    setTimeout(() => {
+      preguntaActualIndex++;
+      if (preguntaActualIndex < juegoData[nivelActual].preguntas.length) {
+        cargarPregunta();
+      } else {
+        nivelActual++;
+        preguntaActualIndex = 0;
+        if (nivelActual < juegoData.length) {
+          cargarPregunta();
+        } else {
+          mostrarFinal();
+        }
+      }
+    }, 2200);
+  }
+
+  function mostrarFinal() {
+    document.getElementById("level-badge").textContent = "🏆 ¡Misión Cumplida!";
+    document.getElementById("progress-bar").style.width = "100%";
+    document.getElementById("question").textContent = `🎉 ¡Has completado los 5 niveles! Tu puntuación total es de ${puntos} / 500 puntos.`;
+    document.getElementById("options").innerHTML = "";
+    document.getElementById("submit-btn").style.display = "none";
+    
+    const fb = document.getElementById("feedback");
+    if (puntos >= 400) {
+      fb.textContent = "🌟 ¡INCREÍBLE! Eres un Gran Maestro de la Gramática.";
+      fb.className = "feedback-box correct";
+    } else {
+      fb.textContent = "👍 ¡Buen intento! Sigue practicando para superarte.";
+      fb.className = "feedback-box warning";
+    }
+    
+    document.getElementById("restart-btn").style.display = "block";
+  }
+
+  function reiniciarJuego() {
+    nivelActual = 0;
+    preguntaActualIndex = 0;
+    puntos = 0;
+    document.getElementById("score").textContent = puntos;
+    document.getElementById("restart-btn").style.display = "none";
+    cargarPregunta();
+  }
+
+  cargarPregunta();
+</script>
+
+</body>
+</html>
